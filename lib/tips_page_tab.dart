@@ -16,8 +16,7 @@ class TipsPageTab extends StatelessWidget {
           navigationBar: CupertinoNavigationBar(
             middle: Text('小贴士'),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(top:64.0,bottom: 50.0),
+          child: SafeArea(
             child: Container(
               child: Markdown(
                 data: snapshot.data,

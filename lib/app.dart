@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
               icon: Icon(CupertinoIcons.bookmark), title: Text('小贴士')),
         ],
       ),
-      tabBuilder: (context, index) {
+      tabBuilder: (context,  index) {
         CupertinoTabView returnValue;
         switch (index) {
           case 0:

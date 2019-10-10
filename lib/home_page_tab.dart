@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:event_tool/model/event.dart';
 import 'package:event_tool/event_tool.dart';
 import 'package:flutter/material.dart';
+import 'package:hctodo/generated/i18n.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -24,43 +25,87 @@ class HomePageTab extends StatelessWidget {
     final List<int> colorCodes = <int>[600, 500, 100];
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('看护宝'),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            largeTitle: Text(S.of(context).app_name),
+            trailing: GestureDetector(
+              onTap: () => showEventDialog(context, true),
+              child: Icon(CupertinoIcons.add),
+            ),
+          ),
+          SliverSafeArea(
+            top: false,
+            sliver: SliverFixedExtentList(
+              itemExtent: 50.0,
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return buildSlidable(index, event, context);
+//                    Container(
+//                    alignment: Alignment.center,
+//                    color: Colors.lightBlue[100 * (index % 9)],
+//                    child: Text('List Item $index'),
+//                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top:64.0,bottom: 64.0),
-        child: ListView.builder(
-            padding: const EdgeInsets.all(0),
-            itemCount: entries.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Slidable(
-                key: ValueKey(index),
-                actionPane: SlidableDrawerActionPane(),
-                actions: <Widget>[
-                  IconSlideAction(
-                    caption: '创建',
-                    color: Colors.orangeAccent,
-                    icon: CupertinoIcons.share_up,
-                    onTap: ()=> EventTool.addEvent(event).then((success) {showEventDialog(context, success);})
-                  )],
-                secondaryActions: <Widget>[
-                  IconSlideAction(
-                    caption: '删除',
-                    color: Colors.red,
-                    icon: CupertinoIcons.delete,
-                  )
-                ],
-                dismissal: SlidableDismissal(
-                  child: SlidableDrawerDismissal(),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text('Entry ${entries[index]}')),
-                ),
-              );
-            }
+    );
+//        navigationBar: CupertinoNavigationBar(
+//          middle: const Text('看护宝'),
+//        ),
+//        child: Padding(
+//          padding: const EdgeInsets.only(top: 64.0, bottom: 64.0),
+//          child: ListView.builder(
+//              padding: const EdgeInsets.all(0),
+//              itemCount: entries.length,
+//              itemBuilder: (BuildContext context, int index) {
+//                return buildSlidable(index, event, context, entries);
+//              }),
+//        ));
+  }
+
+  Slidable buildSlidable(
+      int index, Event event, BuildContext context) {
+    return Slidable(
+      key: ValueKey(index),
+      actionPane: SlidableDrawerActionPane(),
+      actions: <Widget>[
+        IconSlideAction(
+          caption: '耗时',
+          color: Colors.greenAccent,
+          icon: CupertinoIcons.time,
+          onTap: () => true,
         ),
-      )
+        IconSlideAction(
+          caption: '开始时间',
+          color: Colors.lightBlue,
+          icon: CupertinoIcons.clock,
+          onTap: () => true,
+        )
+      ],
+      secondaryActions: <Widget>[
+        IconSlideAction(
+            caption: '创建',
+            color: Colors.orangeAccent,
+            icon: CupertinoIcons.create,
+            onTap: () => EventTool.addEvent(event).then((success) {
+                  showEventDialog(context, success);
+                })),
+        IconSlideAction(
+          caption: '删除',
+          color: Colors.red,
+          icon: CupertinoIcons.delete,
+        )
+      ],
+      dismissal: SlidableDismissal(
+        child: SlidableDrawerDismissal(),
+      ),
+      child: Container(
+          color: Colors.lightBlue[100 * (index % 9)],
+          child: Center(child: Text('Entry $index'))),
     );
   }
 }
