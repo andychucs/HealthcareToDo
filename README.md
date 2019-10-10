@@ -1,6 +1,6 @@
-# hctodo
+# Healthcare ToDo
 
-A new Flutter application.
+A ToDo Flutter application for healthcare.
 
 ## Getting Started
 
