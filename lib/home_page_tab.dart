@@ -7,10 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:ui' as ui;
 
+List<String> eventName = <String>['事件一', '事件二', '事件三', '事件四', '事件五'];
 
 class HomePageTab extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     Event event = Event(
@@ -24,8 +23,6 @@ class HomePageTab extends StatelessWidget {
     );
 
     event.title = 'TEST';
-
-    final List<String> entries = <String>['A', 'B', 'C'];
     final List<int> colorCodes = <int>[600, 500, 100];
 
     return CupertinoPageScaffold(
@@ -34,7 +31,7 @@ class HomePageTab extends StatelessWidget {
           CupertinoSliverNavigationBar(
             largeTitle: Text(S.of(context).app_name),
             trailing: GestureDetector(
-              onTap: () => showEventDialog(context, true),
+              onTap: () => eventName.add('测试事件'),
               child: Icon(CupertinoIcons.add),
             ),
           ),
@@ -45,12 +42,8 @@ class HomePageTab extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return buildSlidable(index, event, context);
-//                    Container(
-//                    alignment: Alignment.center,
-//                    color: Colors.lightBlue[100 * (index % 9)],
-//                    child: Text('List Item $index'),
-//                  );
                 },
+                childCount: eventName.length,
               ),
             ),
           ),
@@ -71,8 +64,7 @@ class HomePageTab extends StatelessWidget {
 //        ));
   }
 
-  Slidable buildSlidable(
-      int index, Event event, BuildContext context) {
+  Slidable buildSlidable(int index, Event event, BuildContext context) {
     return Slidable(
       key: ValueKey(index),
       actionPane: SlidableDrawerActionPane(),
@@ -109,7 +101,7 @@ class HomePageTab extends StatelessWidget {
       ),
       child: Container(
           color: Colors.lightBlue[100 * (index % 9)],
-          child: Center(child: Text('Entry $index'))),
+          child: Center(child: Text('${eventName[index]}'))),
     );
   }
 }
