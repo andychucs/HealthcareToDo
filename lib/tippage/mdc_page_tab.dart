@@ -10,7 +10,6 @@ class MdcPageTab extends StatelessWidget {
 
   Card makeCard(Tip tip,BuildContext context) => Card(
     child: InkWell(
-      splashColor: Colors.blue.withAlpha(30),
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context){
           return TipDetailWidget(tip);
@@ -37,7 +36,7 @@ class MdcPageTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: Color.fromARGB(150, 220, 220, 220),
+      backgroundColor: Colors.grey[200],
       child: CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverNavigationBar(

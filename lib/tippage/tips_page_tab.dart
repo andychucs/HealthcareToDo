@@ -38,7 +38,7 @@ class TipsPageTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: Color.fromARGB(150, 220, 220, 220),
+      backgroundColor: Colors.grey[200],
       child: CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverNavigationBar(

@@ -3,11 +3,8 @@ import 'package:event_tool/model/event.dart';
 import 'package:event_tool/event_tool.dart';
 import 'package:flutter/material.dart';
 import 'package:hctodo/generated/i18n.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:ui' as ui;
-
-List<String> eventName = <String>['事件一', '事件二', '事件三', '事件四', '事件五'];
+import 'package:hctodo/model/hctd.dart';
 
 class HomePageTab extends StatelessWidget {
   @override
@@ -26,7 +23,7 @@ class HomePageTab extends StatelessWidget {
     final List<int> colorCodes = <int>[600, 500, 100];
 
     return CupertinoPageScaffold(
-      backgroundColor: Color.fromARGB(150, 220, 220, 220),
+      backgroundColor: Colors.grey[200],
       child: CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverNavigationBar(
@@ -34,13 +31,15 @@ class HomePageTab extends StatelessWidget {
             trailing: GestureDetector(
               onTap: () {
                 eventName.add('测试事件');
-                CupertinoSliverRefreshControl();
+                Navigator.of(context).push(CupertinoPageRoute(builder: (context){
+                  return EventEditPage();
+                }));
               },
               child: Icon(CupertinoIcons.add),
             ),
           ),
           CupertinoSliverRefreshControl(
-            onRefresh: (){},
+            onRefresh: () {},
           ),
           SliverSafeArea(
             top: false,
@@ -72,7 +71,7 @@ class HomePageTab extends StatelessWidget {
         ),
         IconSlideAction(
           caption: '开始时间',
-          color: Colors.lightBlue,
+          color: Colors.lightBlueAccent,
           icon: CupertinoIcons.clock,
           onTap: () => true,
         )
@@ -87,7 +86,7 @@ class HomePageTab extends StatelessWidget {
                 })),
         IconSlideAction(
           caption: '删除',
-          color: Colors.red,
+          color: Colors.redAccent,
           icon: CupertinoIcons.delete,
         )
       ],
@@ -95,9 +94,35 @@ class HomePageTab extends StatelessWidget {
         child: SlidableDrawerDismissal(),
       ),
       child: Container(
-          color: Colors.lightBlue[100 * (index % 9)],
-          child: Center(child: Text('${eventName[index]}'))),
+          color: Colors.white,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Text(''),
+              ),
+              Expanded(
+                  flex: 8, child: Center(child: Text('${eventName[index]}'))),
+              Expanded(
+                flex: 2,
+                child: Text(''),
+              ),
+            ],
+          )),
     );
+  }
+}
+
+class EventEditPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text('编辑界面'),
+        ),
+        child: SafeArea(
+          child: Text('编辑界面'),
+        ));
   }
 }
 
