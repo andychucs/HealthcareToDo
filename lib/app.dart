@@ -15,9 +15,9 @@ class MyApp extends StatelessWidget {
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text('首页')),
+              icon: Icon(Icons.list), title: Text('待办')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark), title: Text('护理')),
+              icon: Icon(Icons.hotel), title: Text('护理')),
           BottomNavigationBarItem(
               icon: Icon(Icons.local_hospital), title: Text('急救')),
           BottomNavigationBarItem(
