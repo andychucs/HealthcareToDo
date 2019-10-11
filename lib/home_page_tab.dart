@@ -26,14 +26,21 @@ class HomePageTab extends StatelessWidget {
     final List<int> colorCodes = <int>[600, 500, 100];
 
     return CupertinoPageScaffold(
+      backgroundColor: Color.fromARGB(150, 220, 220, 220),
       child: CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverNavigationBar(
             largeTitle: Text(S.of(context).app_name),
             trailing: GestureDetector(
-              onTap: () => eventName.add('测试事件'),
+              onTap: () {
+                eventName.add('测试事件');
+                CupertinoSliverRefreshControl();
+              },
               child: Icon(CupertinoIcons.add),
             ),
+          ),
+          CupertinoSliverRefreshControl(
+            onRefresh: (){},
           ),
           SliverSafeArea(
             top: false,
@@ -50,18 +57,6 @@ class HomePageTab extends StatelessWidget {
         ],
       ),
     );
-//        navigationBar: CupertinoNavigationBar(
-//          middle: const Text('看护宝'),
-//        ),
-//        child: Padding(
-//          padding: const EdgeInsets.only(top: 64.0, bottom: 64.0),
-//          child: ListView.builder(
-//              padding: const EdgeInsets.all(0),
-//              itemCount: entries.length,
-//              itemBuilder: (BuildContext context, int index) {
-//                return buildSlidable(index, event, context, entries);
-//              }),
-//        ));
   }
 
   Slidable buildSlidable(int index, Event event, BuildContext context) {
@@ -125,18 +120,3 @@ void showEventDialog(BuildContext context, bool returnStatus) {
     },
   );
 }
-//Container(
-//child: Padding(
-//padding: const EdgeInsets.all(8.0),
-//child: Center(
-//child: CupertinoButton(
-//child: Text('Try add event to calendar'),
-////                color: Colors.orangeAccent,
-//onPressed: () {
-//EventTool.addEvent(event).then((success) {
-//showEventDialog(context, success);
-//});
-//},
-//)),
-//),
-//),
