@@ -1,3 +1,4 @@
+import 'package:event_tool/model/event.dart';
 import 'package:flutter/foundation.dart';
 
 class Tip {
@@ -10,6 +11,18 @@ class Tip {
 
 List<String> eventName = <String>['翻身', '用药', '擦身', '便溺','漱口', '换衣','放风','用餐','点滴检查','体温测量','雾化'];
 List<String> customEventName = <String>[];
+List<DateTime> customStartTime = <DateTime>[];
+List<DateTime> customEndTime = <DateTime>[];
+
+class CustomEvent{
+  String name;
+  int count,timeInterval,timeConsuming;
+  DateTime startTime;
+
+  CustomEvent({this.name,this.count,this.startTime,this.timeConsuming,this.timeInterval});
+}
+
+List<Event> customEventList = <Event>[];
 
 class DefaultEvent{
   String name;

@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 class HomePageTab extends State<HomePage> {
   SlidableController slidableController;
 
+  TextEditingController _textController;
+
   @protected
   void initState() {
     slidableController = SlidableController(
@@ -23,6 +25,7 @@ class HomePageTab extends State<HomePage> {
       onSlideIsOpenChanged: handleSlideIsOpenChanged,
     );
     super.initState();
+    _textController = TextEditingController(text: '在这里输入一个事件');
   }
 
   Animation<double> _rotationAnimation;
@@ -40,11 +43,87 @@ class HomePageTab extends State<HomePage> {
     });
   }
 
+  CupertinoPageScaffold buildEditPageScaffold() {
+    return CupertinoPageScaffold(
+      backgroundColor: Colors.grey[200],
+      navigationBar: CupertinoNavigationBar(
+        middle: Text('编辑界面'),
+      ),
+      child: SafeArea(
+        child: Center(
+          child: Card(
+            color: Colors.white,
+            child: Container(
+              height: 400,
+              width: 300,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    flex: 4,
+                    child: Container(),
+                  ),
+                  Container(
+                    width: 200,
+                    child: CupertinoTextField(
+                      controller: _textController,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 3,
+                        child: Container(),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text('是否全天'),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: CupertinoSwitch(
+                          value: false,
+                          onChanged: (flag) {
+                            print(flag);
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                  CupertinoButton(
+                    color: Colors.blueAccent,
+                    child: Text('提交'),
+                    onPressed: () => customEventName.add(_textController.text),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Container(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Event event = Event(
       title: 'An event',
-      notes: 'from Even Tool',
+      notes: 'from HealthcareToDo',
       location: 'your position',
       startDate: DateTime.now().add(Duration(minutes: 6)),
       endDate: DateTime.now().add(Duration(minutes: 7)),
@@ -64,10 +143,9 @@ class HomePageTab extends State<HomePage> {
             trailing: GestureDetector(
               onTap: () {
                 print(event.startDate);
-                customEventName.insert(0, '测试事件');
                 Navigator.of(context)
                     .push(CupertinoPageRoute(builder: (context) {
-                  return EventEditPage();
+                  return buildEditPageScaffold();
                 }));
               },
               child: Icon(CupertinoIcons.add),
@@ -107,7 +185,7 @@ class HomePageTab extends State<HomePage> {
   }
 
   Slidable buildSlidable(
-      int index, Event event, BuildContext context, List eventList) {
+      int index, Event event, BuildContext context, List eventList,) {
     return Slidable(
       key: ValueKey(index),
       actionPane: SlidableDrawerActionPane(),
@@ -116,13 +194,37 @@ class HomePageTab extends State<HomePage> {
           caption: '耗时',
           color: Colors.greenAccent,
           icon: CupertinoIcons.time,
-          onTap: () => true,
+          onTap: () => showModalBottomSheet(
+              context: context,
+              builder: (builder) {
+                return Container(
+                  child: CupertinoTimerPicker(
+                    mode: CupertinoTimerPickerMode.hms,
+                    initialTimerDuration: Duration(minutes: 15),
+                    onTimerDurationChanged: (time) {
+                      event.endDate = event.startDate.add(time);
+                    },
+                  ),
+                );
+              }),
         ),
         IconSlideAction(
           caption: '开始时间',
           color: Colors.lightBlueAccent,
           icon: CupertinoIcons.clock,
-          onTap: () => true,
+          onTap: () => showModalBottomSheet(
+              context: context,
+              builder: (builder) {
+                return Container(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.dateAndTime,
+                    initialDateTime: DateTime.now(),
+                    onDateTimeChanged: (time) {
+                      event.startDate = time;
+                    },
+                  ),
+                );
+              }),
         )
       ],
       secondaryActions: <Widget>[
@@ -130,9 +232,14 @@ class HomePageTab extends State<HomePage> {
             caption: '创建',
             color: Colors.orangeAccent,
             icon: CupertinoIcons.create,
-            onTap: () => EventTool.addEvent(event).then((success) {
-                  showEventDialog(context, success);
-                })),
+            onTap: () {
+              event.title = eventList[index];
+              event.alarmBefore = 5;
+              customEventList.add(event);
+              EventTool.addEvent(event).then((success) {
+                showEventDialog(context, success);
+              });
+            }),
         IconSlideAction(
           caption: '删除',
           color: Colors.redAccent,
@@ -209,15 +316,15 @@ class HomePageTab extends State<HomePage> {
               int times = 0;
               int flag = 0;
               while (count > 0) {
-                event.startDate = event.startDate.add(Duration(
-                    minutes: times));
-                event.endDate = event.endDate.add(Duration(
-                    minutes: times));
+                event.startDate = event.startDate.add(Duration(minutes: times));
+                event.endDate = event.endDate.add(Duration(minutes: times));
                 times += getDefaultEvent()[index].timeInterval;
                 count--;
                 EventTool.addEvent(event).then((success) {
                   flag++;
-                  if(flag == 1){showEventDialog(context, success);}
+                  if (flag == 1) {
+                    showEventDialog(context, success);
+                  }
                 });
               }
 
@@ -261,18 +368,26 @@ class HomePageTab extends State<HomePage> {
   }
 }
 
-class EventEditPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text('编辑界面'),
-        ),
-        child: SafeArea(
-          child: Text('编辑界面'),
-        ));
-  }
-}
+//class EventEditPage extends StatelessWidget {
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return buildEditPageScaffold();
+//  }
+//
+//  CupertinoPageScaffold buildEditPageScaffold() {
+//    return CupertinoPageScaffold(
+//      navigationBar: CupertinoNavigationBar(
+//        middle: Text('编辑界面'),
+//      ),
+//      child: SafeArea(
+//        child: CupertinoTextField(
+//          controller: _textController,
+//          ),
+//        ),
+//      );
+//  }
+//}
 
 void showEventDialog(BuildContext context, bool returnStatus) {
   showCupertinoDialog(
