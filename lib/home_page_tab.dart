@@ -6,7 +6,40 @@ import 'package:hctodo/generated/i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hctodo/model/hctd.dart';
 
-class HomePageTab extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  @override
+  HomePageTab createState() => HomePageTab();
+}
+
+class HomePageTab extends State<HomePage> {
+  SlidableController slidableController;
+
+  @protected
+  void initState() {
+    slidableController = SlidableController(
+      onSlideAnimationChanged: handleSlideAnimationChanged,
+      onSlideIsOpenChanged: handleSlideIsOpenChanged,
+    );
+    super.initState();
+  }
+
+  Animation<double> _rotationAnimation;
+  Color _fabColor = Colors.blue;
+
+  void handleSlideAnimationChanged(Animation<double> slideAnimation) {
+    setState(() {
+      _rotationAnimation = slideAnimation;
+    });
+  }
+
+  void handleSlideIsOpenChanged(bool isOpen) {
+    setState(() {
+      _fabColor = isOpen ? Colors.green : Colors.blue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Event event = Event(
@@ -19,7 +52,7 @@ class HomePageTab extends StatelessWidget {
       alarmBefore: 5,
     );
 
-    event.title = 'TEST';
+    event.title = eventName[0];
     final List<int> colorCodes = <int>[600, 500, 100];
 
     return CupertinoPageScaffold(
@@ -30,8 +63,10 @@ class HomePageTab extends StatelessWidget {
             largeTitle: Text(S.of(context).app_name),
             trailing: GestureDetector(
               onTap: () {
-                eventName.add('测试事件');
-                Navigator.of(context).push(CupertinoPageRoute(builder: (context){
+                print(event.startDate);
+                customEventName.insert(0, '测试事件');
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (context) {
                   return EventEditPage();
                 }));
               },
@@ -43,22 +78,36 @@ class HomePageTab extends StatelessWidget {
           ),
           SliverSafeArea(
             top: false,
+            bottom: false,
             sliver: SliverFixedExtentList(
-              itemExtent: 50.0,
+              itemExtent: 60.0,
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return buildSlidable(index, event, context);
+                  return buildSlidable(index, event, context, customEventName);
+                },
+                childCount: customEventName.length,
+              ),
+            ),
+          ),
+          SliverSafeArea(
+            top: false,
+            sliver: SliverFixedExtentList(
+              itemExtent: 60.0,
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return buildDefaultSlidable(index, context, eventName);
                 },
                 childCount: eventName.length,
               ),
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Slidable buildSlidable(int index, Event event, BuildContext context) {
+  Slidable buildSlidable(
+      int index, Event event, BuildContext context, List eventList) {
     return Slidable(
       key: ValueKey(index),
       actionPane: SlidableDrawerActionPane(),
@@ -93,22 +142,121 @@ class HomePageTab extends StatelessWidget {
       dismissal: SlidableDismissal(
         child: SlidableDrawerDismissal(),
       ),
-      child: Container(
-          color: Colors.white,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(''),
-              ),
-              Expanded(
-                  flex: 8, child: Center(child: Text('${eventName[index]}'))),
-              Expanded(
-                flex: 2,
-                child: Text(''),
-              ),
-            ],
-          )),
+      child: Column(
+        children: <Widget>[
+          Container(
+              height: 59.0,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(''),
+                  ),
+                  Expanded(
+                      flex: 8,
+                      child: Center(child: Text('${eventList[index]}'))),
+                  Expanded(
+                    flex: 2,
+                    child: Text(''),
+                  ),
+                ],
+              )),
+          Divider(
+            height: 1.0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Slidable buildDefaultSlidable(
+      int index, BuildContext context, List eventList) {
+    return Slidable(
+      key: ValueKey(index),
+      actionPane: SlidableDrawerActionPane(),
+      actions: <Widget>[
+        IconSlideAction(
+          caption: '次数',
+          color: Colors.amberAccent,
+          icon: CupertinoIcons.refresh,
+          onTap: () => true,
+        ),
+        IconSlideAction(
+          caption: '开始时间',
+          color: Colors.lightBlueAccent,
+          icon: CupertinoIcons.clock,
+          onTap: () => true,
+        )
+      ],
+      secondaryActions: <Widget>[
+        IconSlideAction(
+            caption: '创建',
+            color: Colors.orangeAccent,
+            icon: CupertinoIcons.create,
+            onTap: () {
+              Event event = Event(
+                title: getDefaultEvent()[index].name,
+                notes: 'by HealthcareToDo',
+                location: '',
+                startDate: getDefaultEvent()[index].startTime,
+                endDate: getDefaultEvent()[index].startTime.add(
+                    Duration(minutes: getDefaultEvent()[index].timeConsuming)),
+                allDay: false,
+                alarmBefore: 1,
+              );
+              int count = getDefaultEvent()[index].count;
+              int times = 0;
+              int flag = 0;
+              while (count > 0) {
+                event.startDate = event.startDate.add(Duration(
+                    minutes: times));
+                event.endDate = event.endDate.add(Duration(
+                    minutes: times));
+                times += getDefaultEvent()[index].timeInterval;
+                count--;
+                EventTool.addEvent(event).then((success) {
+                  flag++;
+                  if(flag == 1){showEventDialog(context, success);}
+                });
+              }
+
+//              EventTool.addEvent(event).then((success) {showEventDialog(context, success);}
+            }),
+        IconSlideAction(
+          caption: '删除',
+          color: Colors.redAccent,
+          icon: CupertinoIcons.delete,
+        )
+      ],
+      dismissal: SlidableDismissal(
+        child: SlidableDrawerDismissal(),
+      ),
+      child: Column(
+        children: <Widget>[
+          Container(
+              height: 59.0,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(''),
+                  ),
+                  Expanded(
+                      flex: 8,
+                      child: Center(child: Text('${eventList[index]}'))),
+                  Expanded(
+                    flex: 2,
+                    child: Text(''),
+                  ),
+                ],
+              )),
+          Divider(
+            height: 1.0,
+          ),
+        ],
+      ),
     );
   }
 }

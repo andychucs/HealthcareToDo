@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             returnValue = CupertinoTabView(builder: (context) {
               return CupertinoPageScaffold(
                 backgroundColor: Color.fromARGB(150, 220, 220, 220),
-                child: HomePageTab(),
+                child: HomePage(),
               );
             });
             break;
