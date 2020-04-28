@@ -161,7 +161,7 @@ class HomePageTab extends State<HomePage> {
               itemExtent: 60.0,
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return buildSlidable(index, event, context, customEventName);
+                  return buildSlidable(index, event, context);
                 },
                 childCount: customEventName.length,
               ),
@@ -173,7 +173,8 @@ class HomePageTab extends State<HomePage> {
               itemExtent: 60.0,
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return buildDefaultSlidable(index, context, eventName);
+//                  var item = eventName[index];
+                  return buildDefaultSlidable(index, context);
                 },
                 childCount: eventName.length,
               ),
@@ -185,9 +186,10 @@ class HomePageTab extends State<HomePage> {
   }
 
   Slidable buildSlidable(
-      int index, Event event, BuildContext context, List eventList,) {
+      int index, Event event, BuildContext context) {
+    final item = customEventName[index];
     return Slidable(
-      key: ValueKey(index),
+      key: ValueKey(item),
       actionPane: SlidableDrawerActionPane(),
       actions: <Widget>[
         IconSlideAction(
@@ -233,7 +235,7 @@ class HomePageTab extends State<HomePage> {
             color: Colors.orangeAccent,
             icon: CupertinoIcons.create,
             onTap: () {
-              event.title = eventList[index];
+              event.title = item;
               event.alarmBefore = 5;
               customEventList.add(event);
               EventTool.addEvent(event).then((success) {
@@ -248,6 +250,11 @@ class HomePageTab extends State<HomePage> {
       ],
       dismissal: SlidableDismissal(
         child: SlidableDrawerDismissal(),
+        onDismissed: (actionType){
+          setState(() {
+            customEventName.removeAt(index);
+          });
+        },
       ),
       child: Column(
         children: <Widget>[
@@ -262,7 +269,7 @@ class HomePageTab extends State<HomePage> {
                   ),
                   Expanded(
                       flex: 8,
-                      child: Center(child: Text('${eventList[index]}'))),
+                      child: Center(child: Text('$item'))),
                   Expanded(
                     flex: 2,
                     child: Text(''),
@@ -278,9 +285,10 @@ class HomePageTab extends State<HomePage> {
   }
 
   Slidable buildDefaultSlidable(
-      int index, BuildContext context, List eventList) {
+      int index, BuildContext context) {
+    final item = eventName[index];
     return Slidable(
-      key: ValueKey(index),
+      key: ValueKey(item),
       actionPane: SlidableDrawerActionPane(),
       actions: <Widget>[
         IconSlideAction(
@@ -338,6 +346,11 @@ class HomePageTab extends State<HomePage> {
       ],
       dismissal: SlidableDismissal(
         child: SlidableDrawerDismissal(),
+        onDismissed: (actionType){
+          setState(() {
+            eventName.removeAt(index);
+          });
+        },
       ),
       child: Column(
         children: <Widget>[
@@ -352,7 +365,7 @@ class HomePageTab extends State<HomePage> {
                   ),
                   Expanded(
                       flex: 8,
-                      child: Center(child: Text('${eventList[index]}'))),
+                      child: Center(child: Text('$item'))),
                   Expanded(
                     flex: 2,
                     child: Text(''),

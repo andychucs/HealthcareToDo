@@ -1,5 +1,6 @@
 import 'package:event_tool/model/event.dart';
-import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:hctodo/config.dart' as config;
 
 class Tip {
   String title;
@@ -7,6 +8,23 @@ class Tip {
   String type;
 
   Tip({this.title, this.type, this.content});
+
+  factory Tip.fromJson(Map<String, dynamic> json){
+    return Tip(title: json['title'],type: json['type'],content: json['content']);
+  }
+}
+
+class TipFiles{
+  String type;
+  int num;
+  List<dynamic> filename;
+
+  TipFiles({this.type,this.num,this.filename});
+
+  factory TipFiles.fromJson(Map<dynamic, dynamic> json){
+    return TipFiles(type: json['type'],num: json['num'],filename: json['filename']);
+  }
+
 }
 
 List<String> eventName = <String>['翻身', '用药', '擦身', '便溺','漱口', '换衣','放风','用餐','点滴检查','体温测量','雾化'];
@@ -52,4 +70,11 @@ List<DefaultEvent> getDefaultEvent(){
 
 DateTime getTodayTime(String hourMinutes){
   return DateTime.parse(DateTime.now().toString().split(' ')[0]+' '+'$hourMinutes:00.000000');
+}
+
+Future fetchPosy(path) async{
+  var url = config.IPUrl + path;
+  print(url);
+  final response = await http.get(url);
+  return response.body.toString();
 }

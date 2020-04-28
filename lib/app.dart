@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hctodo/tippage/aid_page_tab.dart';
-import 'package:hctodo/tippage/mdc_page_tab.dart';
+import 'package:hctodo/hospital_page_tab.dart';
+import 'package:hctodo/tippage/tip_page_tab.dart';
+import 'package:hctodo/toolpage/tool_page_tab.dart';
 import 'home_page_tab.dart';
-import 'tippage/tips_page_tab.dart';
 
 class MyApp extends StatelessWidget {
 //  final GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
@@ -16,11 +16,11 @@ class MyApp extends StatelessWidget {
           BottomNavigationBarItem(
               icon: Icon(Icons.list), title: Text('待办')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.hotel), title: Text('护理')),
+              icon: Icon(Icons.build,size: 25,), title: Text('工具')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.local_hospital), title: Text('急救')),
+              icon: Icon(Icons.local_hospital), title: Text('医院')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border), title: Text('药品')),
+              icon: Icon(Icons.folder), title: Text('资料库')),
         ],
       ),
       tabBuilder: (context,  index) {
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             returnValue = CupertinoTabView(builder: (context) {
               return CupertinoPageScaffold(
                 backgroundColor: Color.fromARGB(150, 220, 220, 220),
-                child: TipsPageTab(),
+                child: ToolPageTab(),
               );
             });
             break;
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             returnValue = CupertinoTabView(builder: (context) {
               return CupertinoPageScaffold(
                 backgroundColor: Color.fromARGB(150, 220, 220, 220),
-                child: AidPageTab(),
+                child: HospitalPageTab(),
               );
             });
             break;
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
             returnValue = CupertinoTabView(builder: (context) {
               return CupertinoPageScaffold(
                 backgroundColor: Color.fromARGB(150, 220, 220, 220),
-                child: MdcPageTab(),
+                child: TipPageTab(),
               );
             });
             break;
