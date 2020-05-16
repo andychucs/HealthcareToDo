@@ -25,7 +25,7 @@ class HomePageTab extends State<HomePage> {
       onSlideIsOpenChanged: handleSlideIsOpenChanged,
     );
     super.initState();
-    _textController = TextEditingController(text: '在这里输入一个事件');
+//    _textController = TextEditingController(text: );
   }
 
   Animation<double> _rotationAnimation;
@@ -66,6 +66,7 @@ class HomePageTab extends State<HomePage> {
                     width: 200,
                     child: CupertinoTextField(
                       controller: _textController,
+                      placeholder: '在这里输入一个事件',
                     ),
                   ),
                   Expanded(

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hctodo/hospital_page_tab.dart';
 import 'package:hctodo/tippage/aid_page.dart';
 import 'package:hctodo/tippage/care_page.dart';
 import 'package:hctodo/tippage/mdc_page.dart';
@@ -105,6 +106,8 @@ Card naviCard(item,BuildContext context) => Card(
         default:
           target = null;
       }
+      if (provinces.contains(item))
+        target = ProvinceHospital(name: item,);
       Navigator.of(context).push(CupertinoPageRoute(builder: (context){
         return target;
       }));
@@ -127,10 +130,70 @@ Card naviCard(item,BuildContext context) => Card(
     ),
   ),
 );
+Card provCard(Province item,BuildContext context) => Card(
+  child: InkWell(
+    splashColor: Colors.blue.withAlpha(30),
+    onTap: () {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context){
+        return ProvinceHospital(name: item.name,);
+      }));
+    },
+    child: Container(
+      width: 300,
+      height: 80,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+              flex: 8,
+              child: Center(
+                  child: Text(
+                    item.name,
+                    style: TextStyle(fontSize: 20),
+                  ))),
+          Expanded(flex: 2, child: Icon(CupertinoIcons.forward))
+        ],
+      ),
+    ),
+  ),
+);
 
 
 CupertinoPageScaffold buildTabPageScaffold(context,title,items) {
-  return CupertinoPageScaffold(
+  if (title == '医院信息库')
+    return CupertinoPageScaffold(
+      backgroundColor: Colors.grey[200],
+      child: CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            largeTitle: Text(title),
+            trailing: GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (context) {
+                  return HospitalSearch();
+                }));
+              },
+              child: Icon(CupertinoIcons.search),
+            ),
+          ),
+          SliverSafeArea(
+            top: false,
+            sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (context,index){
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 20,left: 20,top: 5),
+                      child: naviCard(items[index], context),
+                    );
+                  },
+                  childCount: items.length,
+                )),
+          )
+        ],
+      ),
+    );
+  else
+    return CupertinoPageScaffold(
     backgroundColor: Colors.grey[200],
     child: CustomScrollView(
       slivers: <Widget>[

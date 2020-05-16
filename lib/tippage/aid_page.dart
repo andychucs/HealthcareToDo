@@ -10,6 +10,5 @@ class AidPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return buildTipCupertinoPageScaffold(path,type,title);
   }
-
 }
 
